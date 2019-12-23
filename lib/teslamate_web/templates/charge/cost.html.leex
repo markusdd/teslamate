@@ -1,0 +1,41 @@
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li><%= link gettext("Home"), to: "/" %></li>
+    <li><%= link gettext("Charges"), to: "" %></li>
+    <li class="is-active">
+      <%= link @charging_process.id, to: "", data: [date: @charging_process.start_date |> DateTime.to_iso8601()], phx_hook: "LocalTime" %>
+    </li>
+  </ul>
+</nav>
+
+<%= f = form_for @changeset, "#", [ phx_submit: :save, class: "charging_process", id: @charging_process.id] %>
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <%= label f, :cost, gettext("Cost"), class: "label" %>
+    </div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control is-expanded">
+          <%= text_input f, :cost, class: "input", type: :number, min: 0, step: 0.01 %>
+        </div>
+        <p class="help is-danger"><%= error_tag(f, :cost) %></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal mt-25">
+    <div class="field-label"></div>
+    <div class="field-body">
+      <div class="field is-grouped">
+        <%= unless is_nil(@referrer) do %>
+        <div class="control">
+          <%= link gettext("Back"), to: @referrer, class: "button" %>
+        </div>
+        <% end %>
+        <div class="control">
+          <%= submit gettext("Save"), phx_disable_with: gettext("Saving..."), class: "button is-info" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
