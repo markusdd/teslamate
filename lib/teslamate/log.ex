@@ -243,7 +243,10 @@ defmodule TeslaMate.Log do
   ## ChargingProcess
 
   def get_charging_process!(id) do
-    Repo.get!(ChargingProcess, id)
+    ChargingProcess
+    |> where(id: ^id)
+    |> preload([:address, :geofence, :car, :position])
+    |> Repo.one!()
   end
 
   def update_charging_process(%ChargingProcess{} = charge, attrs) do

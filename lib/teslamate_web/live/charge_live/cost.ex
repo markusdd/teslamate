@@ -9,8 +9,6 @@ defmodule TeslaMateWeb.ChargeLive.Cost do
   alias TeslaMate.Log.ChargingProcess
   alias TeslaMate.Log
 
-  # import TeslaMateWeb.Gettext
-
   @impl true
   def render(assigns), do: ChargeView.render("cost.html", assigns)
 
@@ -30,12 +28,11 @@ defmodule TeslaMateWeb.ChargeLive.Cost do
         {referrer, _} when is_binary(referrer) -> referrer
         _ -> nil
       end
-      |> IO.inspect(label: :referrer)
 
     assigns = %{
       charging_process: charging_process,
       changeset: ChargingProcess.changeset(charging_process, %{}),
-      referrer: referrer
+      redirect_to: referrer || Routes.car_path(socket, :index)
     }
 
     {:noreply, assign(socket, assigns)}
@@ -45,7 +42,7 @@ defmodule TeslaMateWeb.ChargeLive.Cost do
   def handle_event("save", %{"charging_process" => params}, socket) do
     case Log.update_charging_process(socket.assigns.charging_process, params) do
       {:ok, _charging_process} ->
-        {:stop, redirect(socket, to: socket.assigns.referrer || Routes.car_path(socket, :index))}
+        {:stop, redirect(socket, to: socket.assigns.redirect_to)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
